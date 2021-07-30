@@ -118,6 +118,4 @@ dist
 .pnp.*
 
 # custom
-watched/
-watchlists/
 .DS_Store
