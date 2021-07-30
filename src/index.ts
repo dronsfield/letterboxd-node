@@ -1,20 +1,53 @@
-// import express from "express"
 import { config } from "dotenv"
-import { watchlists } from "./watchlists"
+import express from "express"
+import {
+  getUnwatchedWatchlistsUnion,
+  getWatchlistsIntersection
+} from "./watchlists"
 config()
 
-watchlists()
+const app = express()
 
-// const app = express()
+const PORT = 6464
 
-// const PORT = 3000
+app.get("/", (req, res) => {
+  res.send(`
+  <ul>
+    <li><a href="/intersect">Intersect</a></li>
+    <li><a href="/unwatched-union">Unwatched union</a></li>
+  </ul>
+  `)
+})
 
-// app.get("/", (req, res) => {
-//   res.send("hello there")
-// })
+function renderTable(rows: any[]) {
+  const headers = Object.keys(rows[0] || {})
+  return `<table style="width: 100%;border: 1px solid black;text-align: left;">
+    <tr>
+      ${headers.map((header) => `<th>${header}</th>`).join("")}
+    </tr>
+    ${rows
+      .map((row) => {
+        return `
+    <tr>
+    ${headers.map((header) => `<td>${row[header]}</td>`).join("")}
+    </tr>
+      `
+      })
+      .join("")}
+  </table>`
+}
 
-// app.listen(PORT, () => {
-//   console.log(`server listening at http://localhost:${PORT}`)
-// })
+app.get("/intersect", async (req, res) => {
+  const data = await getWatchlistsIntersection()
+  res.send(renderTable(data))
+})
 
-// auth("dronzxds", process.env.PASSWORD as string)
+app.get("/unwatched-union", async (req, res) => {
+  const data = await getUnwatchedWatchlistsUnion()
+  res.send(renderTable(data))
+})
+
+app.listen(PORT, () => {
+  const url = `http://localhost:${PORT}`
+  console.log(`server listening at ${url}`)
+})

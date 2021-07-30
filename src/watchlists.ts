@@ -68,10 +68,14 @@ function convertFilmsToUris(films: any[]): string[] {
 
 // ------------------------------------
 
-export async function watchlists() {
+export async function getWatchlistsIntersection() {
   const watchlistsIntersection = convertUrisToFilms(
     intersection((await getWatchlists()).map(convertFilmsToUris))
   )
+  return watchlistsIntersection
+}
+
+export async function getUnwatchedWatchlistsUnion() {
   const watchlistsUnion = convertUrisToFilms(
     union((await getWatchlists()).map(convertFilmsToUris))
   )
@@ -84,6 +88,5 @@ export async function watchlists() {
       convertFilmsToUris(watchedsUnion)
     )
   )
-
-  console.log(watchlistsExceptWatcheds)
+  return watchlistsExceptWatcheds
 }
