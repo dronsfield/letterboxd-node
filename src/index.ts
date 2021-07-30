@@ -8,7 +8,7 @@ config()
 
 const app = express()
 
-const PORT = 6464
+const PORT = process.env.PORT || 6464
 
 app.get("/", (req, res) => {
   res.send(`
